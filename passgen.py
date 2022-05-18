@@ -2,7 +2,8 @@
 import secrets
 import string
 import argparse
-
+import gc
+import pyperclip # remember to pip3 install pyperclip
 
 def main():
     # Defining command line arguments
@@ -12,8 +13,9 @@ def main():
     parser.add_argument('-u', action='store_true', help="use uppercase")
     parser.add_argument('-d', action='store_true', help="use numbers")
     parser.add_argument('-s', action='store_true', help="use symbols")
+    parser.add_argument('-c', action='store_true', help="copy password to clipboard")
     parser.add_argument('-n', default=12, type=int, help="password length (default 12)")
-    parser.add_argument('--charset', default="", help="custom character set \"in quotes\"")
+    parser.add_argument('--charset', default="", help="custom character set 'in singlequotes'")
     args = parser.parse_args()
 
     # Checking how many sets of characters are to be used
@@ -25,7 +27,8 @@ def main():
 
     # Add sets to superset
     chars = ""
-    if args.l:    chars += string.ascii_lowercase
+    if args.l:    
+        chars += string.ascii_lowercase
     if args.u:
         chars += string.ascii_uppercase
     if args.d:
@@ -40,13 +43,22 @@ def main():
 
     # Build and print actual password
     password = ''.join(secrets.choice(chars) for i in range(args.n))
-    print(password)
+    if args.c:
+        pyperclip.copy(password)
+    else:
+        print(password)
+
+    
+    # Clean up sensitive data
+    del(password)
+    del(chars)
+    gc.collect()
 
 def count_arguments(args) -> int:
     """ Counts valid command line arguments except -n"""
     n: int = 0
     for arg in vars(args):
-        if not arg == "n":
+        if arg in ["u", "l", "d", "charset"]:
             n += bool(getattr(args, arg))
     return n
 

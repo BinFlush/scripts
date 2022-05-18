@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+# Versatile password generator by Jákup Lützen
+
 import secrets
 import string
 import argparse
@@ -112,8 +115,6 @@ def checktypes(pairs, this_passw) -> bool:
         # We have all we need. Break out of while loop
         del(this_passw)
         return True
-
-
 
 
 if __name__ == "__main__":

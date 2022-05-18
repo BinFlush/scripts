@@ -25,25 +25,43 @@ def main():
     if elements == 0:
         args.l = args.u = args.d = args.s = True
     elements = count_arguments(args)
+    
+    # Flags and key pairings, makes stuff loopable:
+    pairs = [(args.l, string.ascii_lowercase), (args.u, string.ascii_uppercase), (args.d, string.digits), (args.s, string.punctuation), (bool(args.charset), args.charset)]
 
     # Add sets to superset
     chars = ""
-    if args.l:    
-        chars += string.ascii_lowercase
-    if args.u:
-        chars += string.ascii_uppercase
-    if args.d:
-        chars += string.digits
-    if args.s:
-        chars += string.punctuation
-    if args.charset:
-        chars += args.charset
+    for pair in pairs:
+        if pair[0]:
+            chars += pair[1]
 
     # Deduplicate in case custom characters are entered, that already exist in superset
     chars = unique(chars)
 
     # Build and print actual password
-    password = ''.join(secrets.choice(chars) for i in range(args.n))
+    while True: 
+        matches = 0
+        password = ''.join(secrets.choice(chars) for i in range(args.n))
+        if not args.f:
+            # -f flag not set. We can exit break out already here
+            break
+        if args.n < elements:
+            raise SyntaxError(f"password length can not be lower than amount of character types, when -f flag is specified. You need atleast {elements} characters")
+        # -f flag is set. Check if all specified character types present
+        for pair in pairs:
+            if pair[0] == True:
+                for c in pair[1]:
+                    if c in password:
+                        matches += 1
+                        # Break in order to only register one success per character type
+                        break
+        if matches == elements:
+            # We have all we need. Break out of while loop
+            break
+        print(password, matches, elements)
+
+
+
     if args.c:
         pyperclip.copy(password)
     else:
@@ -59,7 +77,7 @@ def count_arguments(args) -> int:
     """ Counts valid command line arguments except -n"""
     n: int = 0
     for arg in vars(args):
-        if arg in ["u", "l", "d", "charset"]:
+        if arg in ["u", "l", "d", "s", "charset"]:
             n += bool(getattr(args, arg))
     return n
 

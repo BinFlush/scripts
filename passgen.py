@@ -6,6 +6,7 @@ import argparse
 
 def main():
     # Defining command line arguments
+    ### TO-DO: Add option to make sure password includes every character type
     parser = argparse.ArgumentParser(description="Generate a password")
     parser.add_argument('-l', action='store_true', help="use lowercase")
     parser.add_argument('-u', action='store_true', help="use uppercase")
@@ -50,27 +51,15 @@ def count_arguments(args) -> int:
     return n
 
 
-
 def unique(s) -> str:
     """ Just a silly function to deduplicate symbols in a string """
     st: str = ""
     length: int = len(s)
  
-    # loop to traverse the string and
-    # check for repeating chars using
-    # IndexOf() method in Java
     for i in range(length):
- 
-        # character at i'th index of s
         c: str = s[i]
- 
-        # if c is present in str, it returns
-        # the index of c, else it returns - 1
-        # print(st.index(c))
         if c not in st:
-            # adding c to str if -1 is returned
             st += c
- 
     return st
 
 if __name__ == "__main__":

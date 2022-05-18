@@ -58,7 +58,6 @@ def main():
         if matches == elements:
             # We have all we need. Break out of while loop
             break
-        print(password, matches, elements)
 
 
 

@@ -14,6 +14,7 @@ def main():
     parser.add_argument('-d', action='store_true', help="use numbers")
     parser.add_argument('-s', action='store_true', help="use symbols")
     parser.add_argument('-c', action='store_true', help="copy password to clipboard")
+    parser.add_argument('-f', action='store_true', help="Require password to include every specified type of characters")
     parser.add_argument('-n', default=12, type=int, help="password length (default 12)")
     parser.add_argument('--charset', default="", help="custom character set 'in singlequotes'")
     args = parser.parse_args()

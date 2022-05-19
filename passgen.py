@@ -86,6 +86,7 @@ def count_arguments(args) -> int:
 
 
 def superset(pairs) -> list:
+    """ Build list of specified character sets, and return deduplicated list """
     chars = []
     for pair in pairs:
         if pair[0]:

@@ -20,12 +20,12 @@ def main():
     parser.add_argument('-f', action='store_true', help="Require password to include every specified type of characters")
     parser.add_argument('-n', default=default_length, type=int, help=f"password length (default {default_length})")
     parser.add_argument('--charset', default="", help="custom character set 'in singlequotes'")
+    parser.add_argument('--exclude', default="", help="characters to exclude 'in singlequotes' (supersedes --charset flag)")
     parser.add_argument('-r', default=1, type=int, help="'repeats', amount of passwords to be generated. (default 1)")
     
     args = parser.parse_args()
 
     # Checking how many sets of characters are to be used
-    global elements
     elements = count_arguments(args)
 
     # If none given, default to all
@@ -36,24 +36,28 @@ def main():
     # Flags and key pairings, makes stuff loopable:
     pairs = [(args.l, string.ascii_lowercase), (args.u, string.ascii_uppercase), (args.d, string.digits), (args.s, string.punctuation), (bool(args.charset), args.charset)]
 
-    # Add sets to superset
-    chars = superset(pairs)
+    # Add sets to superset (but they are lists)
+    chars: list = superset(pairs)
 
-    # Deduplicate in case custom characters are entered, that already exist in superset
-    chars = unique(chars)
+    # Remove excluded characters
+    if args.exclude:
+        for c in args.exclude:
+            if c in chars:
+                chars.remove(c)
+
 
     # Build and print actual password / passwords
-    passwords = []
+    passwords: list = []
     for _ in range(args.r):
         while True: 
-            password = ''.join(secrets.choice(chars) for i in range(args.n))
+            password: str = ''.join(secrets.choice(chars) for i in range(args.n))
             if not args.f:
                 # -f flag not set. We can exit break out already here
                 break
             if args.n < elements:
                 raise SyntaxError(f"password length can not be lower than amount of character types, when -f flag is specified. You need atleast {elements} characters")
             # -f is set. Check that all types are present.
-            if checktypes(pairs, password):
+            if checktypes(pairs, password, elements):
                 # We have all we need. Break out of while loop
                 break
         passwords.append(password)
@@ -81,27 +85,16 @@ def count_arguments(args) -> int:
     return n
 
 
-def unique(s) -> str:
-    """ Function to deduplicate symbols in a string """
-    st: str = ""
-    length: int = len(s)
- 
-    for i in range(length):
-        c: str = s[i]
-        if c not in st:
-            st += c
-    return st
-
-
-def superset(pairs) -> string:
-    chars = ""
+def superset(pairs) -> list:
+    chars = []
     for pair in pairs:
         if pair[0]:
-            chars += pair[1]
-    return chars
+            chars += list(pair[1])
+    # Finally, deduplicate characters before returning
+    return list(set(chars))
 
 
-def checktypes(pairs, this_passw) -> bool:
+def checktypes(pairs, this_passw, elements) -> bool:
     """ Check if all specified character types in list of tuplets are present in password"""
     matches = 0
     for pair in pairs:
@@ -115,6 +108,8 @@ def checktypes(pairs, this_passw) -> bool:
         # We have all we need. Break out of while loop
         del(this_passw)
         return True
+    else:
+        return False
 
 
 if __name__ == "__main__":

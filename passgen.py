@@ -19,8 +19,8 @@ def main():
     parser.add_argument('-c', action='store_true', help="copy password to clipboard")
     parser.add_argument('-f', action='store_true', help="Require password to include every specified type of characters")
     parser.add_argument('-n', default=default_length, type=int, help=f"password length (default {default_length})")
-    parser.add_argument('--charset', default="", help="custom character set 'in singlequotes'")
-    parser.add_argument('--exclude', default="", help="characters to exclude 'in singlequotes' (supersedes --charset flag)")
+    parser.add_argument('--include', default="", type=str,help=" characters to include 'in singlequotes'")
+    parser.add_argument('--exclude', default="", type=str, help="characters to exclude 'in singlequotes' (supersedes --include flag)")
     parser.add_argument('-r', default=1, type=int, help="'repeats', amount of passwords to be generated. (default 1)")
     
     args = parser.parse_args()
@@ -34,7 +34,7 @@ def main():
     elements = count_arguments(args)
     
     # Flags and key pairings, makes stuff loopable:
-    pairs = [(args.l, string.ascii_lowercase), (args.u, string.ascii_uppercase), (args.d, string.digits), (args.s, string.punctuation), (bool(args.charset), args.charset)]
+    pairs = [(args.l, string.ascii_lowercase), (args.u, string.ascii_uppercase), (args.d, string.digits), (args.s, string.punctuation), (bool(args.include), args.include)]
 
     # Add sets to superset (but they are lists)
     chars: list = superset(pairs)
@@ -80,7 +80,7 @@ def count_arguments(args) -> int:
     """ Counts valid command line arguments except -n"""
     n: int = 0
     for arg in vars(args):
-        if arg in ["u", "l", "d", "s", "charset"]:
+        if arg in ["u", "l", "d", "s", "include"]:
             n += bool(getattr(args, arg))
     return n
 

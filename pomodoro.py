@@ -7,9 +7,10 @@ import datetime
 NOTIFICATION_FILE = 'bell-sound.mp3' 
 
 def main():
-    long_break_length_minutes = 30
     short_break_length_minutes = 5
     work_length_minutes = 25
+    use_long_breaks = True
+    long_break_length_minutes = 15
     periods = 0
 
     while True:
@@ -18,12 +19,12 @@ def main():
         action(message)
         timer(work_length_minutes * 60)
 
-        if periods % 4 == 0:
+        if periods % 4 == 0 and use_long_breaks:
             # Long break
             message = "LONG BREAK STARTED"
             breaklength = long_break_length_minutes
         else:
-            message = "SHORT BREAK PERIOD STARTED"
+            message = "BREAK PERIOD STARTED"
             breaklength = short_break_length_minutes
         action(message)
         timer(breaklength * 60)
@@ -41,7 +42,7 @@ def action(message):
     subprocess.Popen(notify_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     tm = datetime.datetime.now()
-    print(message, "at", str(tm.hour) + ":" + str(tm.minute))
+    print(message, "at", "%02d"%tm.hour + ":" + "%02d"%tm.minute)
 
 def timer(seconds):
     progress = 0

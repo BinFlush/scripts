@@ -5,12 +5,12 @@ import time
 import subprocess
 
 class Pomodoro():
-    def pauseplay(self):
+    def pauseplay(self, event=None):
         if self.count == True:
-            print("true. setting to false")
+            #print("true. setting to false")
             self.count = False
         else:
-            print("flase. setting to true")
+            #print("flase. setting to true")
             self.count = True
             self.now_unix = round(time.time())
             self.starting_unix_timestamp = self.now_unix - self.progress
@@ -26,9 +26,9 @@ class Pomodoro():
         self.progress = 0
         self.sum = self.work
         self.update()
-        self.cycle_t.set("0")
+#        self.cycle_t.set("0")
 
-    def backward(self):
+    def backward(self, event=None):
         if self.count:
             self.starting_unix_timestamp += self.changesteps
         else:
@@ -36,7 +36,7 @@ class Pomodoro():
             self.sum += self.changesteps
         self.update()
 
-    def forward(self):
+    def forward(self, event=None):
         if self.count:
             self.starting_unix_timestamp -= self.changesteps
         else:
@@ -46,7 +46,7 @@ class Pomodoro():
 
 
     def timer(self):
-        print(str(self.count))
+        #print(str(self.count))
         if self.count == True:
             self.now_unix = round(time.time())
             self.progress = self.now_unix - self.starting_unix_timestamp
@@ -55,12 +55,13 @@ class Pomodoro():
                 self.iterate()
             self.update()
    #         if self.progress > 0 or self.has_done_first_start == False:
-            print("sum=", self.sum, "periods=", self.periods, "progress=", self.progress, "activity=", self.activity, "cycle=", self.full_cycle)
+            #print("sum=", self.sum, "periods=", self.periods, "progress=", self.progress, "activity=", self.activity)
    #         self.has_done_first_start == True
             self.root.after(250,self.timer)
 
     def update(self):
-        self.t.set(time.strftime("%H:%M:%S", time.gmtime(self.sum)))
+        txt = time.strftime("%M:%S", time.gmtime(self.sum))
+        self.t.set(txt)
         
     def action(self, message):
    
@@ -69,7 +70,7 @@ class Pomodoro():
             stdout=subprocess.DEVNULL, 
             stderr=subprocess.DEVNULL)
 
-        notify_command = ['notify-send', f'"{self.message}"']
+        notify_command = ['notify-send', f'{self.message}']
         subprocess.Popen(notify_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def iterate(self):
@@ -122,29 +123,32 @@ class Pomodoro():
 
         self.root = Tk()
         self.root.title("Pymodoro")
-        self.root.geometry("176x150")
+#        self.root.geometry("170x140")
         self.t = StringVar()
         self.cycle_t = StringVar()
         self.cycle_t.set(str(self.full_cycle))
 #        self.t.set("00:00:00")
         self.update()
-        self.lb = Label(self.root, textvariable=self.t, font=("Times 30 bold"), bg="white")
+        self.lb = Label(self.root, textvariable=self.t, font=("Times 25 bold"), bg="white")
         self.periods_label = Label(self.root, textvariable=self.cycle_t, font=("Times 18 bold"), bg="gray")
         self.bt1 = Button(self.root, text="On/Off", command=self.pauseplay, font=("Times 12 bold"), bg=("gray"))
         self.bt3 = Button(self.root, text="Reset", command=self.reset, font=("Times 12 bold"), bg=("gray"))
         self.bt4 = Button(self.root, text="->", command=self.forward, font=("Times 12 bold"), bg=("gray"))
         self.bt5 = Button(self.root, text="<-", command=self.backward, font=("Times 12 bold"), bg=("gray"))
-        self.bt6 = Button(self.root, text="->", command=self.iterate, font=("Times 12 bold"), bg=("gray"))
+        self.bt6 = Button(self.root, text="->>", command=self.iterate, font=("Times 12 bold"), bg=("gray"))
         self.root.bind("k",self.pauseplay)
 
-        self.lb.place(x=10,y=10)
-        self.periods_label.place(x=10,y=103)
-        self.bt5.place(x=10,y=70)
-        self.bt1.place(x=45,y=70)
-        self.bt4.place(x=120,y=70)
-        self.bt3.place(x=52,y=103)
-        self.bt6.place(x=120,y=103)
-        self.label = Label(self.root,text="",font=("Times 40 bold"))
+        self.lb.grid(row=0,columnspan=3, sticky='ew')# counter
+        self.periods_label.grid(row=2,column=0, sticky='ew')# counter
+        self.bt5.grid(row=1,column=0, sticky='ew')# back
+        self.bt1.grid(row=1,column=1, sticky='ew')# on/off
+        self.bt4.grid(row=1,column=2, sticky='ew')# forward
+        self.bt3.grid(row=2,column=1, sticky='ew')# reset
+        self.bt6.grid(row=2,column=2, sticky='ew')# ->>
+#       self.label = Label(self.root,text="",font=("Times 40 bold"))
         self.root.configure(bg='#191919')
+        self.root.bind('<space>', self.pauseplay)
+        self.root.bind('<Right>', self.forward)
+        self.root.bind('<Left>', self.backward)
         self.root.mainloop()
 a = Pomodoro() 

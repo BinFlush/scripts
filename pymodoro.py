@@ -106,6 +106,7 @@ class Pomodoro():
         else:
             if self.autorun.get() == 0:
                 self.progress = 0
+                self.update()
                 self.pauseplay()
             
 

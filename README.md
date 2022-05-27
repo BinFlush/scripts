@@ -25,6 +25,10 @@ A simple terminal pomodoro timer. It lacks functionality to pause/play, reset an
 # passgen.py
 
 A full featured, simple password generator.\
+
+**Dependencies:**
+* pyperclip (pip3 install pyperclip)
+
 from help me file:
 
 

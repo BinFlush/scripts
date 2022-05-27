@@ -10,8 +10,6 @@ import gc
 import pyperclip # remember to pip3 install pyperclip
 
 DEFAULT_LENGTH = 16
-global PAIRS
-PAIRS = []
 
 def main():
     # Defining command line arguments
@@ -38,14 +36,14 @@ def main():
     elements = count_arguments(args)
     
     # Flags and key pairings, makes stuff loopable:
-    PAIRS = [(args.l, string.ascii_lowercase), 
+    pairs = [(args.l, string.ascii_lowercase), 
             (args.u, string.ascii_uppercase), 
             (args.d, string.digits), 
             (args.s, string.punctuation), 
             (bool(args.include), args.include)]
 
     # Add specified strings of character groups to character pool
-    chars: list = specified_characters()
+    chars: list = specified_characters(pairs)
 
     # Remove excluded characters
     if args.exclude:
@@ -56,7 +54,7 @@ def main():
     # Build and print actual password / passwords
     passwords: list = []
     for _ in range(args.r):
-        password = make_password(chars, args.n, args.f, elements, PAIRS)
+        password = make_password(chars, args.n, args.f, elements, pairs)
         passwords.append(password)
     
 
@@ -82,25 +80,25 @@ def count_arguments(args) -> int:
     return n
 
 
-def specified_characters() -> list:
+def specified_characters(pairs) -> list:
     """
     Build list of specified character sets, and return deduplicated list
     """
     chars = []
-    for pair in PAIRS:
+    for pair in pairs:
         if pair[0]:
             chars += list(pair[1])
     # Finally, deduplicate characters before returning
     return list(set(chars))
 
 
-def checktypes(PAIRS, this_passw, elements) -> bool:
+def checktypes(pairs, this_passw, elements) -> bool:
     """ 
     Check if all specified character types in list of tuplets
     are present in password
     """
     matches = 0
-    for pair in PAIRS:
+    for pair in pairs:
         if pair[0] == True:
             for c in pair[1]:
                 if c in this_passw:
@@ -115,7 +113,7 @@ def checktypes(PAIRS, this_passw, elements) -> bool:
     else:
         return False
 
-def make_password(characters, length, force, elements, PAIRS):
+def make_password(characters, length, force, elements, pairs):
     max_tries = 1000
     tries = 0
     while True: 
@@ -126,7 +124,7 @@ def make_password(characters, length, force, elements, PAIRS):
         if length < elements:
             raise SyntaxError(f"password length can not be lower than amount of character types, when -f flag is specified. You need atleast {elements} characters")
         # -f is set. Check that all types are present.
-        if checktypes(PAIRS, password, elements):
+        if checktypes(pairs, password, elements):
             # We have all we need. Break out of while loop
             return password
         tries += 1

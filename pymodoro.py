@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
-from tkinter import *
+import argparse
+import subprocess
 import sys
 import time
-import subprocess
+
+from tkinter import *
+
+parser = argparse.ArgumentParser(description="Pomodoro timer")
+parser.add_argument('-w', '--work', default=25, type=int, help="Length of work periods in minutes (default 25)")
+parser.add_argument('-s', '--short_break', default=5, type=int, help="Length of short break periods in minutes (default 5)")
+parser.add_argument('-l', '--long_break', default=15, type=int, help="Length of long break periods in minutes (default 15)")
+parser.add_argument('-p', '--period', default=4, type=int, help="Every n-th cycle makes long break (default 4)")
+
+args = parser.parse_args()
 
 class Pomodoro():
     def pauseplay(self, event=None):
@@ -89,7 +99,7 @@ class Pomodoro():
             # break
             self.lb.configure(bg='green')
             self.status.set('BREAK')
-            if self.periods % 8 == 0:
+            if self.periods % self.cyclelength == 0:
                 # longbrake
                 self.activity = self.long
                 self.message = "STARTING LONG BRAKE"
@@ -113,12 +123,13 @@ class Pomodoro():
 
 
     def __init__(self):
-        self.long_break_length_minutes = 15
-        self.short_break_length_minutes = 5
-        self.work_length_minutes = 25
+        self.long_break_length_minutes = args.long_break
+        self.short_break_length_minutes = args.short_break
+        self.work_length_minutes = args.work
         self.long = self.long_break_length_minutes * 60
         self.short = self.short_break_length_minutes * 60
         self.work = self.work_length_minutes * 60
+        self.cyclelength = args.period * 2
         self.activity = self.work
         self.periods = 0
         self.progress = 0

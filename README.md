@@ -24,7 +24,7 @@ A simple terminal pomodoro timer. It lacks functionality to pause/play, reset an
 
 # passgen.py
 
-A full featured, simple password generator.
+A full featured, simple password generator.\
 from help me file:
 
 
@@ -33,10 +33,11 @@ usage: passgen [-h] [-l] [-u] [-d] [-s] [-c] [-f] [-n N] [--include INCLUDE]
 
 Generate a password
 
-options:
-  -h, --help         show this help message and exit
-  -l                 use lowercase
-  -u                 use uppercase
+|options:||
+|--|--|
+  |-h, --help         |show this help message and exit|
+  |-l                 |use lowercase|
+  |-u                 |use uppercase|
   -d                 use digits
   -s                 use symbols
   -c                 copy password to clipboard

@@ -8,9 +8,9 @@ A gui pomodoro timer written in python.
 * notify-send (for popups)
 
 **Keyboard shortcuts:**
-* subtract one minute from countdown (<Right>)
-* add one minuter to timer (<Left>)
-* Start/stop (<space>)
+* subtract one minute from countdown (Right arrow)
+* add one minuter to timer (Left arrow)
+* Start/stop (space)
 * Reset (r)
 
 # pomodoro.py

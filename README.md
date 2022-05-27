@@ -38,14 +38,11 @@ Generate a password
   |-h, --help         |show this help message and exit|
   |-l                 |use lowercase|
   |-u                 |use uppercase|
-  -d                 use digits
-  -s                 use symbols
-  -c                 copy password to clipboard
-  -f                 Require password to include every specified type of
-                     characters
-  -n N               password length (default 16)
-  --include INCLUDE  characters to include 'in singlequotes'
-  --exclude EXCLUDE  characters to exclude 'in singlequotes' (supersedes
-                     --include flag)
-  -r R               'repeats', amount of passwords to be generated. (default
-                     1)
+  |-d                 |use digits|
+  |-s                 |use symbols|
+  |-c                 |copy password to clipboard|
+  |-f                 |Require password to include every specified type of characters|
+  |-n N               |password length (default 16)|
+  |--include INCLUDE  |characters to include 'in singlequotes'|
+  |--exclude EXCLUDE  |characters to exclude 'in singlequotes' (supersedes --include flag)|
+  |-r R               |'repeats', amount of passwords to be generated. (default 1)|

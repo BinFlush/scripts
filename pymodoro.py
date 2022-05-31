@@ -15,113 +15,6 @@ parser.add_argument('-p', '--period', default=4, type=int, help="Every n-th cycl
 args = parser.parse_args()
 
 class Pomodoro():
-    def pauseplay(self, event=None):
-        if self.count == True:
-            #print("true. setting to false")
-            self.count = False
-        else:
-            #print("flase. setting to true")
-            self.count = True
-            self.now_unix = round(time.time())
-            self.starting_unix_timestamp = self.now_unix - self.progress
-
-
-        self.timer()
-
-
-    def reset(self):
-        self.count = False
-        self.lb.configure(bg='white')
-        self.periods = 0
-        self.progress = 0
-        self.sum = self.work
-        self.update()
-#        self.cycle_t.set("0")
-
-    def backward(self, event=None):
-        if self.count:
-            self.starting_unix_timestamp += self.changesteps
-        else:
-            self.progress -= self.changesteps
-            self.sum += self.changesteps
-        self.update()
-
-    def forward(self, event=None):
-        if self.count:
-            self.starting_unix_timestamp -= self.changesteps
-        else:
-            self.progress += self.changesteps
-            self.sum -= self.changesteps
-        self.update()
-
-
-    def timer(self):
-        #print(str(self.count))
-        if self.count == True:
-            self.now_unix = round(time.time())
-            self.progress = self.now_unix - self.starting_unix_timestamp
-            self.sum = self.activity - self.progress
-            if self.sum < 0 or self.periods == 0:
-                self.iterate()
-            self.update()
-   #         if self.progress > 0 or self.has_done_first_start == False:
-            print("sum=", self.sum, "periods=", self.periods, "progress=", self.progress, "activity=", self.activity)
-   #         self.has_done_first_start == True
-            self.root.after(250,self.timer)
-
-    def update(self):
-        txt = time.strftime("%M:%S", time.gmtime(self.sum))
-        self.t.set(txt)
-        
-    def action(self, message):
-   
-        sound_command = ["ffplay", "-nodisp", "-autoexit", self.notification_file] 
-        subprocess.Popen(sound_command, 
-            stdout=subprocess.DEVNULL, 
-            stderr=subprocess.DEVNULL)
-
-        notify_command = ['notify-send', f'{self.message}']
-        subprocess.Popen(notify_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-    def iterate(self):
-        self.periods += 1
-        self.full_cycle = -(-self.periods//2)
-        self.cycle_t.set(str(self.full_cycle))
-        self.sum = 0
-        self.now_unix = round(time.time())
-        if self.periods % 2 == 1:
-            # odd number means work
-            self.activity = self.work
-            self.lb.configure(bg='red')
-            self.status.set('WORK')
-            self.message = "STARTING WORKING SESSION"
-        else:
-            # break
-            self.lb.configure(bg='green')
-            self.status.set('BREAK')
-            if self.periods % self.cyclelength == 0:
-                # longbrake
-                self.activity = self.long
-                self.message = "STARTING LONG BRAKE"
-            else:
-                # shortbrake
-                self.message = "STARTING BRAKE"
-                self.activity = self.short
-        self.action(self.message)
-        self.starting_unix_timestamp = round(time.time())
-        self.sum = self.activity
-        if not self.count:
-            self.update()
-            self.progress = 0
-        else:
-            if self.autorun.get() == 0:
-                self.progress = 0
-                self.update()
-                self.pauseplay()
-            
-
-
-
     def __init__(self):
         self.long_break_length_minutes = args.long_break
         self.short_break_length_minutes = args.short_break
@@ -177,4 +70,117 @@ class Pomodoro():
         self.root.bind('<Right>', self.forward)
         self.root.bind('<Left>', self.backward)
         self.root.mainloop()
+
+    def pauseplay(self, event=None):
+        if self.count == True:
+            #print("true. setting to false")
+            self.count = False
+        else:
+            #print("flase. setting to true")
+            self.count = True
+            self.now_unix = round(time.time())
+            self.starting_unix_timestamp = self.now_unix - self.progress
+
+
+        self.timer()
+
+
+    def reset(self):
+        self.count = False
+        self.lb.configure(bg='white')
+        self.periods = 0
+        self.progress = 0
+        self.sum = self.work
+        self.update()
+#        self.cycle_t.set("0")
+
+    def backward(self, event=None):
+        if self.count:
+            self.starting_unix_timestamp += self.changesteps
+        else:
+            self.progress -= self.changesteps
+            self.sum += self.changesteps
+        self.update()
+
+    def forward(self, event=None):
+        if self.count:
+            self.starting_unix_timestamp -= self.changesteps
+        else:
+            self.progress += self.changesteps
+            self.sum -= self.changesteps
+        self.update()
+
+
+    def timer(self):
+        #print(str(self.count))
+        if self.count == True:
+            self.now_unix = round(time.time())
+            self.progress = self.now_unix - self.starting_unix_timestamp
+            self.sum = self.activity - self.progress
+            if self.sum < 0 or self.periods == 0:
+                self.iterate()
+            self.update()
+   #         if self.progress > 0 or self.has_done_first_start == False:
+#            print("sum=", self.sum, "periods=", self.periods, "progress=", self.progress, "activity=", self.activity)
+   #         self.has_done_first_start == True
+            self.root.after(250,self.timer)
+
+    def update(self):
+        txt = time.strftime("%M:%S", time.gmtime(self.sum))
+        self.t.set(txt)
+        
+    def action(self, message):
+   
+        sound_command = ["ffplay", "-nodisp", "-autoexit", self.notification_file] 
+        subprocess.Popen(sound_command, 
+            stdout=subprocess.DEVNULL, 
+            stderr=subprocess.DEVNULL)
+
+        notify_command = ['notify-send', f'{self.message}']
+        subprocess.Popen(notify_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    def iterate(self):
+        self.periods += 1
+        self.full_cycle = -(-self.periods//2)
+        self.cycle_t.set(str(self.full_cycle))
+        self.sum = 0
+        self.now_unix = round(time.time())
+        if self.periods % 2 == 1:
+            # odd number means work
+            self.activity = self.work
+            self.lb.configure(bg='red')
+            self.status.set('WORK')
+            self.message = "STARTING WORKING SESSION"
+        else:
+            # break
+            self.lb.configure(bg='green')
+            self.status.set('BREAK')
+            if self.periods % self.cyclelength == 0:
+                # longbrake
+                self.activity = self.long
+                self.message = "STARTING LONG BRAKE"
+            else:
+                # shortbrake
+                self.message = "STARTING BRAKE"
+                self.activity = self.short
+        self.action(self.message)
+        self.starting_unix_timestamp = round(time.time())
+        self.sum = self.activity
+        if not self.count:
+            ## If we're not counting (ie. someone pushed forward button)
+            self.update()
+            self.progress = 0
+        else:
+            ## Normal case. App is counting
+            if self.autorun.get() == 0:
+                # 
+                self.progress = 0
+                self.update()
+                # stop if, unless 
+                if not self.periods == 1:
+                    self.pauseplay()
+            
+
+
+
 a = Pomodoro() 

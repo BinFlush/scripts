@@ -1,6 +1,7 @@
 # pymodoro.py
 
 A gui pomodoro timer written in python.
+
 ![Demo Image](images/pymodoro.png)
 
 **Dependencies:**
